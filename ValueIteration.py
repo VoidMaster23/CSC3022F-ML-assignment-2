@@ -1,8 +1,15 @@
 import  sys
+from utils import extract_args
 
 
 
 
 if __name__ == "__main__":
 
-    print(sys.argv[1:])
+    width, height, startPt, endPt, k, gamma = extract_args(sys.argv)
+    print(width)
+    print(height)
+    print(startPt)
+    print(endPt)
+    print(k)
+    print(gamma)
