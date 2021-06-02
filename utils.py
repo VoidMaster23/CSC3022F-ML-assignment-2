@@ -43,17 +43,17 @@ def extract_args(args):
         end_Ypos = int(args[e_ind+2])
     else:
         print("Start or End Positions not given, randomising both values")
-        start_Ypos = randint(0,height)
-        start_Xpos = randint(0,width)
+        start_Ypos = randint(0,height-1)
+        start_Xpos = randint(0,width-1)
 
-        end_Ypos = randint(0,height)
-        end_Xpos = randint(0,width)
+        end_Ypos = randint(0,height-1)
+        end_Xpos = randint(0,width-1)
 
         #check that the points are equal and then generate a place until they are not
         if(start_Ypos == end_Ypos and start_Xpos == end_Ypos ):
             while (start_Ypos == end_Ypos and start_Xpos == end_Ypos):
-                end_Ypos = randint(0,height)
-                end_Xpos = randint(0,width)
+                end_Ypos = randint(0,height-1)
+                end_Xpos = randint(0,width-1)
 
     #get k
     k = None

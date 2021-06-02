@@ -40,7 +40,7 @@ if __name__ == '__main__':
 	end_state = (2, 1)
 
 	mines = []
-	#mines = [(1,1)]  # Uncomment this to check out what mines will look like
+	mines = [(1,1)]  # Uncomment this to check out what mines will look like
 
 	# We don't need a list of mine positions since our example doesn't have any
 	opt_pol = [(0,0), (1, 0), (2, 0), (2, 1)] # The above example has multiple valid optimal policies, this is just one of them.
