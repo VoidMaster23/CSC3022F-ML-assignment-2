@@ -1,5 +1,5 @@
 import  sys
-from utils import extract_args, init_states, init_mines, determine_possible_actions
+from utils import extract_args, init_states, init_mines, determine_possible_actions, generate_records
 import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
@@ -120,21 +120,6 @@ def generate_opt_pol(policy, start_pt, end_pt):
     return opt_pol
 
 
-def generate_records(raw_records, width, height):
-    records = []
-    for raw_record in raw_records:
-        record = []
-        for y in range(height):
-            row = []
-            for x in range(width):
-                coord = (y, x)
-                row.append(raw_record[coord])
-            record.append(row)
-        records.append(record)
-    
-    return records
-
-    
     
     
 if __name__ == "__main__":
@@ -162,11 +147,14 @@ if __name__ == "__main__":
     policy = generate_opt_pol(raw_policy, start_pt, end_pt)
     records = generate_records(raw_records, width, height)
 
+
     print(f"Optimal Policy from {start_pt} to {end_pt} :")
     print(policy)
     
     anim, fig, ax = generateAnimat(records, start_pt, end_pt, mines=mine_locs, opt_pol=policy, start_val=0, end_val=100, mine_val=-100, just_vals=False, generate_gif=True)
     plt.show()
+
+
 
     
 

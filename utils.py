@@ -58,7 +58,7 @@ def extract_args(args):
     #learning rate
     learning = None
     if("-learning" in args):
-        learning = float(args[args.index("-learning")])
+        learning = float(args[args.index("-learning")+1])
     else:
         learning = 0.65
 
@@ -67,7 +67,7 @@ def extract_args(args):
     if("-epochs" in args):
         generations = int(args[args.index("-epochs") + 1])
     else: 
-        generations = 500
+        generations = 10
 
     #get k
     k = None
@@ -81,7 +81,7 @@ def extract_args(args):
     if("-gamma" in args):
         gamma = float(args[args.index("-gamma") + 1])
     else:
-        gamma = 0.9
+        gamma = 0.8
 
     if args[0] == "ValueIteration.py":
         return width, height, (start_Ypos, start_Xpos), (end_Ypos, end_Xpos), k, gamma
@@ -142,6 +142,20 @@ def init_mines(k, start, end, width, height):
         mine_locs.append(coord)
     
     return mine_locs
+
+def generate_records(raw_records, width, height):
+    records = []
+    for raw_record in raw_records:
+        record = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                coord = (y, x)
+                row.append(raw_record[coord])
+            record.append(row)
+        records.append(record)
+    
+    return records
 
 def determine_possible_actions(width, height, mine_locs):
     """
