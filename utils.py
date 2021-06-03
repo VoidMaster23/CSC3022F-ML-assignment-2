@@ -51,7 +51,7 @@ def extract_args(args):
 
         #check that the points are equal and then generate a place until they are not
         if(start_Ypos == end_Ypos and start_Xpos == end_Ypos ):
-            while (start_Ypos == end_Ypos and start_Xpos == end_Ypos):
+            while (start_Ypos == end_Ypos and start_Xpos == end_Xpos):
                 end_Ypos = randint(0,height-1)
                 end_Xpos = randint(0,width-1)
 
@@ -67,10 +67,10 @@ def extract_args(args):
     if("-gamma" in args):
         gamma = float(args[args.index("-gamma") + 1])
     else:
-        gamma = 0.65
+        gamma = 0.9
 
 
-    return width, height, (start_Xpos, start_Ypos), (end_Xpos, end_Ypos), k, gamma    
+    return width, height, (start_Ypos, start_Xpos), (end_Ypos, end_Xpos), k, gamma    
 
 
 
