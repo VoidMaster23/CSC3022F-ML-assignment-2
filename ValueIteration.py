@@ -2,10 +2,13 @@ import  sys
 from utils import extract_args
 import numpy as np
 from random import randint
+import matplotlib.pyplot as plt
+
+from Animate import generateAnimat
 
 def init_states(width, height):
     """
-    Function to initialise the 2D array
+    Function to initialise the 2D array (assuming that top-left is 0,0)
     
     Arguments: 
         width (int): number of grid columns
@@ -70,20 +73,15 @@ def init_rewards(width, height, mine_locs, end_pt ):
     for mine in mine_locs:
         # mine loc is <y, x>
         print(f"x:{mine[1]}, y:{mine[0]}")
-        rewards[mine[0]][mine[1]] = -1
+        rewards[mine[0]][mine[1]] = -100
     
-    rewards[end_pt[0]][end_pt[1]] = 1
+    rewards[end_pt[0]][end_pt[1]] = 100
     
     print(f"Intial reward values after mines and end:\n {np.array(rewards)}")
     return rewards
 
 def get_possible_actions_list(width, height, mine_locs, end_pt):
-    """
-    Function to determine the possible actions available for each state
-
-    Represents an available action as  [UP, DOWN, LEFT, RIGHT] where the presence of a number is given by a binary value ,
-     1 meaning the action is valid for that state and 0 meaning that it is not
-    """
+    
     actions_list = []
     for y in range(height):
         actions_row = []
@@ -117,10 +115,14 @@ def get_final_action_arr(position, next_position):
     return action_arr
 
 def determine_possible_actions(width, height, mine_locs):
+    """
+    construct a set of legal actions for each position, excluding the mine locations
+    """
+    #
     actions = {}
     for y in range (height):
         for x in range(width):
-            coord = (y, x)
+            coord = (y, x) # row, col
             legal_moves = []
             if(coord not in mine_locs):
                 if (y < height-1):
@@ -139,29 +141,33 @@ def determine_possible_actions(width, height, mine_locs):
                 
     
 
-def iterate(width, height, mine_locs, start_pt, end_pt, possible_actions, initial_rewards, gamma, grid_world):
+def iterate(mine_locs,possible_actions, initial_rewards, gamma, grid_world):
+    """
+    Function to perform value iteration
 
+    Returns:
+        records
+        policy
+    """
 
-    states = []
+    records = []
 
-    #initial V 
+    #initial Valies and policy
     V = {}
     policy = {}
     for position in grid_world:
         V[position]  = initial_rewards[position[0]][position[1]]
         if(position not in mine_locs):
-            policy[position] = np.random.choice(possible_actions[position])
+            policy[position] = np.random.choice(possible_actions[position]) #choose a random starting action for each policy
     
-    # states.append(V)
-    # policy ={start_pt: possible_actions[start_pt]}
+    records.append(V)
 
-    # print(f"POLICY: {policy}")
-
-
-    while True :
-        
-        #use some difference factor
+    difference = difference = 100
+    #loop until the optimum has been found
+    while difference > 0.0001:
         difference = 0
+        # visit each position in the grid
+        # and evaluate actions for each action available ina position
         for position in grid_world:
             if position in policy:
                
@@ -188,7 +194,6 @@ def iterate(width, height, mine_locs, start_pt, end_pt, possible_actions, initia
                
 
                     if v > new_value:
-                 
                         new_value = v
                         policy[position] = action
                         
@@ -196,29 +201,56 @@ def iterate(width, height, mine_locs, start_pt, end_pt, possible_actions, initia
                 V[position] = new_value
 
                 difference = max(difference, np.abs(old_value-new_value))
-        if difference == 0:
-            break
-    
-    return policy
+        records.append(V.copy()) #save states
+    return records,policy
                     
 
+def generate_opt_pol(policy, start_pt, end_pt):
+    opt_pol = []
+    point = start_pt
+    opt_pol.append(point)
+    while point != end_pt:
+        y = point[0]
+        x = point[1]
+
+        
+        action = policy[point]
+
+        if(action == "U"):
+            point = (y-1,x)
+        if(action == "D"):
+            point = (y+1,x)
+        if(action == "L"):
+            point = (y,x-1)
+        if(action == "R"):
+            point = (y,x+1)
+        
+        opt_pol.append(point)
+    return opt_pol
 
 
+def generate_records(raw_records, width, height):
+    #print(raw_records)
+    records = []
+    for raw_record in raw_records:
+        record = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                coord = (y, x)
+                row.append(raw_record[coord])
+            record.append(row)
+        records.append(record)
+    
+
+    for record in records:
+        print(record)
+    
+    return records
 
     
     
-            
-            
-
-
-
-
-
-
-
-
-
-
+    
 if __name__ == "__main__":
 
     #get the arguments
@@ -238,7 +270,13 @@ if __name__ == "__main__":
     initial_rewards = init_rewards(width, height, mine_locs, end_pt)
     
 
-    print(iterate(width, height, mine_locs,start_pt, end_pt, possible_actions, initial_rewards, gamma, grid_world))
+    raw_records, raw_policy  = iterate(mine_locs,possible_actions, initial_rewards, gamma, grid_world)
+    #print(policy)
+    policy = generate_opt_pol(raw_policy, start_pt, end_pt)
+    records = generate_records(raw_records, width, height)
+    
+    anim, fig, ax = generateAnimat(records, start_pt, end_pt, mines=mine_locs, opt_pol=policy, start_val=0, end_val=100, mine_val=-100, just_vals=False, generate_gif=True)
+    plt.show()
 
     
 

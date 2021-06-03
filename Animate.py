@@ -31,12 +31,12 @@ def generateAnimat(records: [[float]], start_state: (float, float), end_state: (
 
 		if not just_vals:
 			# Set start state col
-			records[i][start_state[1]][start_state[0]] = start_val
+			records[i][start_state[0]][start_state[1]] = start_val
 			# Set end state col
-			records[i][end_state[1]][end_state[0]] = end_val
+			records[i][end_state[0]][end_state[1]] = end_val
 			# Set mine col
 			for mine in mines:
-				records[i][mine[1]][mine[0]] = mine_val
+				records[i][mine[0]][mine[1]] = mine_val
 
 			# Setup the final frame of the animation
 			if is_last_frame:
@@ -45,7 +45,7 @@ def generateAnimat(records: [[float]], start_state: (float, float), end_state: (
 						records[i][j][k] = 0
 			
 				for state in opt_pol:
-					records[i][state[1]][state[0]] = opt_val
+					records[i][state[0]][state[1]] = opt_val
 
 		# Generate the pix map
 		ax.imshow(records[i], interpolation='none', cmap='jet', vmin=vmin, vmax=vmax)
@@ -54,16 +54,16 @@ def generateAnimat(records: [[float]], start_state: (float, float), end_state: (
 		for j in range(len(records[i])):
 			for k in range(len(records[i][j])):
 
-				text=[str(round(records[i][j][k]))] if not is_last_frame else []
+				text=[str(round(records[i][j][k],3))] if not is_last_frame else []
 
 				# Check if state is start state,
-				if j == start_state[1] and k == start_state[0]:
+				if j == start_state[0] and k == start_state[1]:
 					text = ['start'] + text if just_vals else ['start']
-				elif j == end_state[1] and k == end_state[0]:
+				elif j == end_state[0] and k == end_state[1]:
 					text = ['end'] + text if just_vals else ['end']
 				else:
 					for mine in mines:
-						if j == mine[1] and k == mine[0]:
+						if j == mine[0] and k == mine[1]:
 							text = ['landmine'] + text if just_vals else ['landmine']
 
 				if is_last_frame:
